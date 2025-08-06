@@ -108,3 +108,37 @@ SELECT
     JOIN animal ON servico_animal.idAnimal = animal.id
     JOIN funcionario ON servico_animal.funcionarioCPF = funcionario.CPF
 ;
+
+CREATE TABLE compra(
+    id INT AUTO_INCREMENT NOT NULL,
+    clienteCPF CHAR(11) NOT NULL,
+    funcionarioCPF CHAR(11) NOT NULL,
+    valorTotal DECIMAL(10, 2) NOT NULL,
+    dataCompra DATE NOT NULL,
+    CONSTRAINT PKcompra PRIMARY KEY(id),
+    CONSTRAINT FKclienteCompra FOREIGN KEY (clienteCPF) REFERENCES cliente(CPF),
+    CONSTRAINT FKfuncionarioCompra FOREIGN KEY (funcionarioCPF) REFERENCES funcionario(CPF)
+);
+
+CREATE TABLE compraProduto(
+    idProduto INT NOT NULL,
+    idCompra INT NOT NULL,
+    CONSTRAINT FKprodutoComprado FOREIGN KEY (idProduto) REFERENCES produto(id),
+    CONSTRAINT FKcompraDoProduto FOREIGN KEY (idCompra) REFERENCES compra(id)
+);
+
+CREATE VIEW relatorio_compras AS 
+SELECT
+    c.nome AS nome_cliente,
+    f.nome AS nome_funcionario,
+    compra.id AS codigo_compra,
+    p.nome AS nome_produto,
+    COUNT(cp.idProduto) AS quantidade_produtos,
+    compra.valorTotal AS valor_total,
+    compra.dataCompra AS data_compra
+FROM compra
+JOIN cliente c ON compra.clienteCPF = c.CPF
+JOIN funcionario f ON compra.funcionarioCPF = f.CPF
+JOIN compraProduto cp ON compra.id = cp.idCompra
+JOIN produto p ON cp.idProduto = p.id
+GROUP BY compra.id, c.nome, f.nome, p.nome, compra.valorTotal, compra.dataCompra;
