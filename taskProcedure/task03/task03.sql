@@ -71,3 +71,16 @@ INNER JOIN funcionarios f ON p.idFuncionario = f.id
 INNER JOIN departamentos d ON f.idDepartamento = d.id
 ORDER BY p.id, f.id;
 
+DELIMITER $$
+
+CREATE PROCEDURE relatorio_equipe_projeto (
+    IN p_id_filtro INT
+)
+BEGIN
+    SELECT * FROM equipeProjeto
+    WHERE codigo_projeto = p_id_filtro;
+END $$
+
+DELIMITER ;
+
+CALL relatorio_equipe_projeto();
