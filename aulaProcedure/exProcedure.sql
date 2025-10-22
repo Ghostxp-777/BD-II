@@ -1,6 +1,6 @@
 DROP DATABASE IF EXISTS autenticacao;
 
-CREATE DATABASE autenticacao;
+CREATE DATABASE autenticacao; 
 
 USE autenticacao;
 
