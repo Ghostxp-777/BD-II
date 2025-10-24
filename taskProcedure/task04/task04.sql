@@ -163,6 +163,7 @@ INNER JOIN professores p ON d.idProfessorResponsavel = p.id;
 CREATE VIEW profCurso AS
 SELECT 
     c.id AS idCurso,
+    c.codigo AS codigoCurso,
     c.nome AS nomeCurso,
     p.id AS idProfessor,
     p.nome AS nomeProfessor,
@@ -243,6 +244,8 @@ WHERE p.nome = 'MARCO MACHADO'
 AND h.media > 8
 ORDER BY h.media DESC;
 
+-- Procedures
+
 DELIMITER $$
 
 CREATE PROCEDURE Proc_BoletimAluno (
@@ -263,21 +266,36 @@ END $$
 
 DELIMITER ;
 
--- Mudar essa procedure
-
 DELIMITER $$
 
 CREATE PROCEDURE Proc_ProfessoresCurso (
-    IN p_codigo_curso INT
+    IN p_codigo_curso CHAR(6)
 )
 BEGIN
     SELECT
-        p.nome AS nome_professor,
-        p.email AS email_professor,
-        d.nome AS nome_disciplina
-    FROM disciplinas d
-    INNER JOIN professores p ON d.idProfessorResponsavel = p.id
-    WHERE 
+        idProfessor,
+        nomeProfessor,
+        emailProfessor
+    FROM profCurso
+    WHERE codigoCurso = p_codigo_curso;
+END $$
+
+DELIMITER ;
+
+-- Mudar essa procedure (o aluno não é id, mas sim codigo eu acho)
+
+DELIMITER $$
+
+CREATE PROCEDURE Proc_AlunosSituacao ()
+BEGIN
+    SELECT 
+        a.nome AS nomeAluno,
+        d.nome AS disciplina,
+        h.media
+        FROM historicosEscolares h
+        INNER JOIN alunos a ON h.idAluno = a.id
+        INNER JOIN disciplinas d ON h.idDisciplina = d.id
+        WHERE faltas <= 5;
 END $$
 
 DELIMITER ;
